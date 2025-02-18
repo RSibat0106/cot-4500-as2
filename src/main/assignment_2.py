@@ -1,6 +1,4 @@
-python3 -m pip install numpy
 import numpy as np
-
 def neville_interpolation(x_data, y_data, x_interp):
     """
     Neville's method for polynomial interpolation.
