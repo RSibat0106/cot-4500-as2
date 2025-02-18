@@ -1,27 +1,26 @@
-import numpy as np
-def neville_interpolation(x_data, y_data, x_interp):
+def neville_method(x_data, y_data, x_interp):
     """
-    Neville's method for polynomial interpolation.
+    Implements Neville's interpolation method to find f(x_interp).
     
-    :param x_data: List of x values
+    :param x_data: List of x values (known data points)
     :param y_data: List of corresponding f(x) values
     :param x_interp: The x value to interpolate
     :return: Interpolated value at x_interp
     """
     n = len(x_data)
-    Q = np.zeros((n, n))
-    
-    # Initialize first column with function values
-    for i in range(n):
-        Q[i, 0] = y_data[i]
+    Q = [[0.0] * n for _ in range(n)]  # Initialize empty table
 
-    # Compute Neville’s table
+    # Fill the first column with function values
+    for i in range(n):
+        Q[i][0] = y_data[i]
+
+    # Apply Neville's formula
     for j in range(1, n):
         for i in range(n - j):
-            Q[i, j] = ((x_interp - x_data[i + j]) * Q[i, j - 1] + 
-                       (x_data[i] - x_interp) * Q[i + 1, j - 1]) / (x_data[i] - x_data[i + j])
-    
-    return Q[0, n - 1]  # Return the top-right value of the table
+            Q[i][j] = ((x_interp - x_data[i + j]) * Q[i][j - 1] + 
+                       (x_data[i] - x_interp) * Q[i + 1][j - 1]) / (x_data[i] - x_data[i + j])
+
+    return Q[0][n - 1]  # Top-right value is the interpolated result
 
 # Given data points
 x_values = [3.6, 3.8, 3.9]
@@ -30,6 +29,6 @@ y_values = [1.675, 1.436, 1.318]
 # Interpolation point
 x_interp = 3.7
 
-# Compute interpolation
-interpolated_value = neville_interpolation(x_values, y_values, x_interp)
-print(f"Interpolated value at x = {x_interp}: {interpolated_value:.6f}")
+# Compute interpolated value
+result = neville_method(x_values, y_values, x_interp)
+print(f"Interpolated value at x = {x_interp}: {result:.6f}")
