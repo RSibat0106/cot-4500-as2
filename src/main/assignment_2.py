@@ -112,3 +112,61 @@ polynomials = newton_forward_polynomial(x_values, difference_table)
 print("\nNewton's Forward Interpolation Polynomials:")
 for poly in polynomials:
     print(poly)
+
+def newton_forward_difference_table(x_values, y_values):
+    """
+    Constructs the forward difference table for Newton's forward interpolation (pure Python).
+    
+    :param x_values: List of x values (equally spaced)
+    :param y_values: List of corresponding f(x) values
+    :return: Forward difference table as a list of lists
+    """
+    n = len(y_values)
+    diff_table = [[0] * n for _ in range(n)]  # Create an empty table
+    for i in range(n):
+        diff_table[i][0] = y_values[i]  # Fill first column with f(x) values
+
+    # Compute forward differences
+    for j in range(1, n):
+        for i in range(n - j):
+            diff_table[i][j] = diff_table[i + 1][j - 1] - diff_table[i][j - 1]
+
+    return diff_table
+
+def newton_forward_interpolation(x_values, diff_table, x_interp):
+    """
+    Computes f(x_interp) using Newton's forward interpolation formula.
+    
+    :param x_values: List of x values (equally spaced)
+    :param diff_table: Forward difference table
+    :param x_interp: The x value to interpolate
+    :return: Approximated f(x_interp)
+    """
+    h = x_values[1] - x_values[0]  # Step size
+    p = (x_interp - x_values[0]) / h  # Compute p
+
+    # Compute interpolated value using Newton's formula
+    f_x = diff_table[0][0]
+    p_term = 1  # Stores the product terms of (p)(p-1)(p-2)...
+
+    for j in range(1, len(x_values)):
+        p_term *= (p - (j - 1)) / j  # Compute the next term in product
+        f_x += p_term * diff_table[0][j]  # Add next difference term
+
+    return f_x
+
+# Given data points
+x_values = [7.2, 7.4, 7.5, 7.6]
+y_values = [23.5492, 25.3913, 26.8224, 27.4589]
+
+# Compute forward difference table
+difference_table = newton_forward_difference_table(x_values, y_values)
+
+# Interpolation point
+x_interp = 7.3
+
+# Compute interpolated value
+f_approx = newton_forward_interpolation(x_values, difference_table, x_interp)
+
+# Display the result
+print(f"Approximated f({x_interp}) using Newton's Forward Interpolation: {f_approx:.6f}")
