@@ -19,7 +19,7 @@ x_interp_neville = 3.7
 
 result_neville = neville_method(x_values_neville, y_values_neville, x_interp_neville)
 print(result_neville)
-
+print("")
 # Problem 2: Newton's Forward Difference Table
 def newton_forward_difference_table(x_values, y_values):
     n = len(y_values)
@@ -49,6 +49,7 @@ coefficients_newton = newton_forward_polynomial(x_values_newton, difference_tabl
 
 for coef in coefficients_newton:
     print(coef)
+    print("")
 
 # Problem 3: Approximate f(7.3) using Newton’s Forward Method
 def newton_forward_interpolation(x_values, diff_table, x_interp):
@@ -66,6 +67,7 @@ def newton_forward_interpolation(x_values, diff_table, x_interp):
 x_interp_newton = 7.3
 result_newton_interp = newton_forward_interpolation(x_values_newton, difference_table_newton, x_interp_newton)
 print(result_newton_interp)
+print("")
 
 # Problem 4: Hermite Divided Difference Table
 def hermite_divided_difference(x_values, y_values, dy_values):
@@ -93,6 +95,7 @@ dy_values_hermite = [-1.195, -1.188, -1.182]
 hermite_table = hermite_divided_difference(x_values_hermite, y_values_hermite, dy_values_hermite)
 for row in hermite_table:
     print(row)
+    print("")
 
 # Problem 5: Cubic Spline Interpolation - Find Matrices A, b, x
 def cubic_spline_matrices(x_values, y_values):
@@ -135,9 +138,11 @@ matrix_A, vector_b, vector_x = cubic_spline_matrices(x_values_spline, y_values_s
 #Matrix M
 for row in matrix_A:
     print(row)
+    print("")
 
 #Vector B
 print(vector_b)
-
-#Vectory X
+print("")
+#Vector X
 print(vector_x)
+print("")
