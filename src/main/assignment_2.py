@@ -33,9 +33,6 @@ x_interp = 3.7
 result = neville_method(x_values, y_values, x_interp)
 print(f"Interpolated value at x = {x_interp}: {result:.6f}")
 
-import numpy as np
-import pandas as pd
-
 def newton_forward_difference_table(x_values, y_values):
     """
     Constructs the forward difference table for Newton's forward interpolation (pure Python).
