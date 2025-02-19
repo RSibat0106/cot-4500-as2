@@ -231,3 +231,4 @@ hermite_table, z_values = hermite_divided_difference(x_values, y_values, dy_valu
 
 # Print the Hermite divided difference table
 print_hermite_table(z_values, hermite_table)
+
