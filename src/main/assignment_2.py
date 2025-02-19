@@ -145,4 +145,3 @@ print(vector_b)
 print("")
 #Vector X
 print(vector_x)
-print("")
