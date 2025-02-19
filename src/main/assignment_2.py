@@ -132,12 +132,12 @@ y_values_spline = [3, 5, 7, 9]
 
 matrix_A, vector_b, vector_x = cubic_spline_matrices(x_values_spline, y_values_spline)
 
-print("Matrix A:")
+#Matrix M
 for row in matrix_A:
     print(row)
 
-print("\nVector b:")
+#Vector B
 print(vector_b)
 
-print("\nVector x:")
+#Vectory X
 print(vector_x)
