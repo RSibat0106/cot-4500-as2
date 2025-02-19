@@ -170,3 +170,64 @@ f_approx = newton_forward_interpolation(x_values, difference_table, x_interp)
 
 # Display the result
 print(f"Approximated f({x_interp}) using Newton's Forward Interpolation: {f_approx:.6f}")
+
+def hermite_divided_difference(x_values, y_values, dy_values):
+    """
+    Constructs the Hermite divided difference table.
+    
+    :param x_values: List of x values
+    :param y_values: List of corresponding f(x) values
+    :param dy_values: List of corresponding f'(x) values
+    :return: Hermite divided difference table
+    """
+    n = len(x_values)
+    size = 2 * n  # Hermite interpolation doubles the table size
+    H = [[0] * size for _ in range(size)]  # Initialize table
+
+    # Duplicate x-values in first column
+    z = [x for x in x_values for _ in (0, 1)]
+    
+    # First column: duplicate y-values
+    for i in range(n):
+        H[2 * i][0] = H[2 * i + 1][0] = y_values[i]
+
+    # First divided difference: use derivative values
+    for i in range(n):
+        H[2 * i + 1][1] = dy_values[i]
+        if i != n - 1:
+            H[2 * i][1] = (y_values[i + 1] - y_values[i]) / (x_values[i + 1] - x_values[i])
+
+    # Compute remaining divided differences
+    for j in range(2, size):
+        for i in range(size - j):
+            H[i][j] = (H[i + 1][j - 1] - H[i][j - 1]) / (z[i + j] - z[i])
+
+    return H, z  # Return divided difference table and expanded x-values
+
+def print_hermite_table(z, H):
+    """
+    Prints the Hermite divided difference table.
+    """
+    print("\nHermite Divided Difference Table:")
+    headers = ["z (x values)", "f(x)"] + [f"Div. Diff. {j}" for j in range(1, len(H[0]))]
+    print("{:<12} {:<12}".format(headers[0], headers[1]), end="")
+    for h in headers[2:]:
+        print("{:<12}".format(h), end="")
+    print()
+
+    for i in range(len(z)):
+        print(f"{z[i]:<12} {H[i][0]:<12.6f}", end="")
+        for j in range(1, len(H[i]) - i):
+            print(f"{H[i][j]:<12.6f}", end="")
+        print()
+
+# Given data points
+x_values = [3.6, 3.8, 3.9]
+y_values = [1.675, 1.436, 1.318]
+dy_values = [-1.195, -1.188, -1.182]
+
+# Compute Hermite divided difference table
+hermite_table, z_values = hermite_divided_difference(x_values, y_values, dy_values)
+
+# Print the Hermite divided difference table
+print_hermite_table(z_values, hermite_table)
