@@ -38,21 +38,41 @@ import pandas as pd
 
 def newton_forward_difference_table(x_values, y_values):
     """
-    Constructs the forward difference table for Newton's forward interpolation.
+    Constructs the forward difference table for Newton's forward interpolation (pure Python).
     
     :param x_values: List of x values (equally spaced)
     :param y_values: List of corresponding f(x) values
-    :return: Forward difference table as a DataFrame
+    :return: Forward difference table as a list of lists
     """
     n = len(y_values)
-    diff_table = np.zeros((n, n))
-    diff_table[:, 0] = y_values
+    diff_table = [[0] * n for _ in range(n)]  # Create an empty table
+    for i in range(n):
+        diff_table[i][0] = y_values[i]  # Fill first column with f(x) values
 
+    # Compute forward differences
     for j in range(1, n):
         for i in range(n - j):
-            diff_table[i, j] = diff_table[i + 1, j - 1] - diff_table[i, j - 1]
+            diff_table[i][j] = diff_table[i + 1][j - 1] - diff_table[i][j - 1]
 
-    return pd.DataFrame(diff_table, columns=[f"Δ^{j} f(x)" if j > 0 else "f(x)" for j in range(n)])
+    return diff_table
+
+def print_difference_table(x_values, diff_table):
+    """
+    Prints the forward difference table in a readable format.
+    """
+    print("\nNewton's Forward Difference Table:")
+    n = len(x_values)
+    headers = ["x", "f(x)"] + [f"Δ^{j} f(x)" for j in range(1, n)]
+    print("{:<8} {:<12}".format(headers[0], headers[1]), end="")
+    for h in headers[2:]:
+        print("{:<12}".format(h), end="")
+    print()
+
+    for i in range(n):
+        print(f"{x_values[i]:<8} {diff_table[i][0]:<12.6f}", end="")
+        for j in range(1, n - i):
+            print(f"{diff_table[i][j]:<12.6f}", end="")
+        print()
 
 def newton_forward_polynomial(x_values, diff_table):
     """
@@ -60,16 +80,15 @@ def newton_forward_polynomial(x_values, diff_table):
     
     :param x_values: List of x values (equally spaced)
     :param diff_table: Forward difference table
-    :return: Polynomial expressions as strings
     """
     h = x_values[1] - x_values[0]  # Step size
     x0 = x_values[0]  # First x value
     
     # Extract first-row forward differences
-    f0 = diff_table.iloc[0, 0]
-    f1 = diff_table.iloc[0, 1] / h
-    f2 = diff_table.iloc[0, 2] / (2 * h**2)
-    f3 = diff_table.iloc[0, 3] / (6 * h**3)
+    f0 = diff_table[0][0]
+    f1 = diff_table[0][1] / h
+    f2 = diff_table[0][2] / (2 * h**2)
+    f3 = diff_table[0][3] / (6 * h**3)
     
     # Create polynomial strings
     P1 = f"P1(x) = {f0:.6f} + ({f1:.6f}) * (x - {x0:.1f})"
@@ -77,22 +96,22 @@ def newton_forward_polynomial(x_values, diff_table):
     P3 = (f"P3(x) = {f0:.6f} + ({f1:.6f}) * (x - {x0:.1f}) + ({f2:.6f}) * (x - {x0:.1f}) * (x - {x_values[1]:.1f})"
           f" + ({f3:.6f}) * (x - {x0:.1f}) * (x - {x_values[1]:.1f}) * (x - {x_values[2]:.1f})")
     
-    return P1, P2, P3
+    return [P1, P2, P3]
 
 # Given data points
-x_values = np.array([7.2, 7.4, 7.5, 7.6])
-y_values = np.array([23.5492, 25.3913, 26.8224, 27.4589])
+x_values = [7.2, 7.4, 7.5, 7.6]
+y_values = [23.5492, 25.3913, 26.8224, 27.4589]
 
 # Compute forward difference table
 difference_table = newton_forward_difference_table(x_values, y_values)
 
-# Display the difference table
-print("\nNewton's Forward Difference Table:")
-print(difference_table)
+# Print the difference table
+print_difference_table(x_values, difference_table)
 
-# Compute and print polynomial approximations
+# Compute polynomial approximations
 polynomials = newton_forward_polynomial(x_values, difference_table)
 
+# Display polynomial approximations
 print("\nNewton's Forward Interpolation Polynomials:")
 for poly in polynomials:
     print(poly)
