@@ -182,44 +182,39 @@ def hermite_divided_difference(x_values, y_values, dy_values):
     """
     n = len(x_values)
     size = 2 * n  # Hermite interpolation doubles the table size
-    H = [[0] * size for _ in range(size)]  # Initialize table
+    H = [[0] * (size + 1) for _ in range(size)]  # Initialize table
 
     # Duplicate x-values in first column
     z = [x for x in x_values for _ in (0, 1)]
     
     # First column: duplicate y-values
     for i in range(n):
-        H[2 * i][0] = H[2 * i + 1][0] = y_values[i]
+        H[2 * i][0] = H[2 * i + 1][0] = z[2 * i] = z[2 * i + 1] = x_values[i]
+        H[2 * i][1] = H[2 * i + 1][1] = y_values[i]
 
     # First divided difference: use derivative values
     for i in range(n):
-        H[2 * i + 1][1] = dy_values[i]
+        H[2 * i + 1][2] = dy_values[i]
         if i != n - 1:
-            H[2 * i][1] = (y_values[i + 1] - y_values[i]) / (x_values[i + 1] - x_values[i])
+            H[2 * i][2] = (y_values[i + 1] - y_values[i]) / (x_values[i + 1] - x_values[i])
 
     # Compute remaining divided differences
-    for j in range(2, size):
-        for i in range(size - j):
-            H[i][j] = (H[i + 1][j - 1] - H[i][j - 1]) / (z[i + j] - z[i])
+    for j in range(3, size + 1):
+        for i in range(size - j + 1):
+            H[i][j] = (H[i + 1][j - 1] - H[i][j - 1]) / (z[i + j - 1] - z[i])
 
-    return H, z  # Return divided difference table and expanded x-values
+    return H
 
-def print_hermite_table(z, H):
+def print_hermite_table(H):
     """
-    Prints the Hermite divided difference table.
+    Prints the Hermite divided difference table in a formatted style.
     """
     print("\nHermite Divided Difference Table:")
-    headers = ["z (x values)", "f(x)"] + [f"Div. Diff. {j}" for j in range(1, len(H[0]))]
-    print("{:<12} {:<12}".format(headers[0], headers[1]), end="")
-    for h in headers[2:]:
-        print("{:<12}".format(h), end="")
-    print()
-
-    for i in range(len(z)):
-        print(f"{z[i]:<12} {H[i][0]:<12.6f}", end="")
-        for j in range(1, len(H[i]) - i):
-            print(f"{H[i][j]:<12.6f}", end="")
-        print()
+    for row in H:
+        print("[", end=" ")
+        for value in row:
+            print(f"{value: .10e}", end=" ")
+        print("]")
 
 # Given data points
 x_values = [3.6, 3.8, 3.9]
@@ -227,8 +222,9 @@ y_values = [1.675, 1.436, 1.318]
 dy_values = [-1.195, -1.188, -1.182]
 
 # Compute Hermite divided difference table
-hermite_table, z_values = hermite_divided_difference(x_values, y_values, dy_values)
+hermite_table = hermite_divided_difference(x_values, y_values, dy_values)
 
-# Print the Hermite divided difference table
-print_hermite_table(z_values, hermite_table)
+# Print the formatted table
+print_hermite_table(hermite_table)
+
 
